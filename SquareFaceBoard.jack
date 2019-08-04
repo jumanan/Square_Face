@@ -1,0 +1,929 @@
+/**
+ * Draws SquareFaceBoard - One level only
+ */
+ 
+ class SquareFaceBoard{
+ 	field int _gems;
+	field int _brickType;
+	field Matrix _activeLevel;
+ 
+ 	/**
+	 * ctor:
+	 */
+	constructor SquareFaceBoard new(int lvl,int brickType){
+		let _brickType = brickType;
+		let _activeLevel = Matrix.new();
+		do init(lvl);
+		return this;
+	}	
+	
+
+	/**
+	 * initalize board with level lvl
+	 */
+	method void init(int lvl){
+		do Screen.clearScreen();
+			
+		//drawing screen borders
+		do Screen.setColor(true);
+		do Screen.drawLine(6, 13, 6, 240);
+		do Screen.drawLine(6, 13, 507, 13);
+		do Screen.drawLine(507, 13, 507, 240);
+		
+		//print & update status bar	
+		do StatusBar.output();
+		do StatusBar.updateLevel(lvl);
+		
+		if(lvl = 1){
+			do initLevel1();
+		}else{
+			if (lvl=2){
+				do initLevel2();
+			}else{
+				do initLevel3();
+			}
+		}
+		do drawEnemyBox();
+		do StatusBar.updateGems(_gems);
+		return;
+	}
+	
+	/**
+	 * prepare next level board
+	 */
+	method void nextLevel(int lvl){
+		do _activeLevel.dispose();
+		let _activeLevel = Matrix.new();
+		do init(lvl);
+		return;
+	}
+	
+	/**
+	 * intialize level 1
+	 */
+	method void initLevel1(){
+		let _gems = 0;
+		
+		// adding in bricks
+		// line 1
+		/*do _activeLevel.insert(1, 1, 1);
+		do _activeLevel.insert(1, 2, 1);
+		do _activeLevel.insert(1, 5, 1);
+		do _activeLevel.insert(1, 6, 1);
+		do _activeLevel.insert(1, 7, 1);
+		do _activeLevel.insert(1, 12, 1);
+		do _activeLevel.insert(1, 13, 1);
+		do _activeLevel.insert(1, 15, 1);
+		do _activeLevel.insert(1, 17, 1);
+		do _activeLevel.insert(1, 18, 1);
+		// line 2
+		do _activeLevel.insert(2, 1, 1);
+		do _activeLevel.insert(2, 9, 1);
+		do _activeLevel.insert(2, 11, 1);
+		do _activeLevel.insert(2, 12, 1);
+		do _activeLevel.insert(2, 13, 1);
+		do _activeLevel.insert(2, 15, 1);
+		do _activeLevel.insert(2, 18, 1);
+		// line 3
+		do _activeLevel.insert(3, 1, 1);
+		do _activeLevel.insert(3, 3, 1);
+		do _activeLevel.insert(3, 5, 1);
+		do _activeLevel.insert(3, 7, 1);
+		do _activeLevel.insert(3, 13, 1);
+		do _activeLevel.insert(3, 15, 1);
+		do _activeLevel.insert(3, 18, 1);
+		// line 4
+		do _activeLevel.insert(4, 3, 1);
+		do _activeLevel.insert(4, 4, 1);
+		do _activeLevel.insert(4, 5, 1);
+		do _activeLevel.insert(4, 6, 1);
+		do _activeLevel.insert(4, 7, 1);
+		do _activeLevel.insert(4, 15, 1);
+		do _activeLevel.insert(4, 16, 1);
+		// line 5
+		do _activeLevel.insert(5, 1, 1);
+		do _activeLevel.insert(5, 3, 1);
+		do _activeLevel.insert(5, 5, 1);
+		do _activeLevel.insert(5, 7, 1);
+		do _activeLevel.insert(5, 13, 1);
+		do _activeLevel.insert(5, 15, 1);
+		do _activeLevel.insert(5, 18, 1);
+		// line 6
+		do _activeLevel.insert(6, 1, 1);
+		do _activeLevel.insert(6, 13, 1);
+		do _activeLevel.insert(6, 15, 1);
+		do _activeLevel.insert(6, 18, 1);
+		// line 7
+		do _activeLevel.insert(7, 1, 1);
+		do _activeLevel.insert(7, 2, 1);
+		do _activeLevel.insert(7, 4, 1);
+		do _activeLevel.insert(7, 5, 1);
+		do _activeLevel.insert(7, 6, 1);
+		do _activeLevel.insert(7, 7, 1);
+		do _activeLevel.insert(7, 9, 1);	
+		do _activeLevel.insert(7, 10, 1);
+		do _activeLevel.insert(7, 11, 1);
+		do _activeLevel.insert(7, 15, 1);
+		do _activeLevel.insert(7, 17, 1);
+		do _activeLevel.insert(7, 18, 1);
+		// line 8
+		do _activeLevel.insert(8, 13, 1);
+		
+		//adding in dots
+		//line 0
+		do _activeLevel.insert(0, 0, 2);
+		do _activeLevel.insert(0, 1, 2);
+		do _activeLevel.insert(0, 2, 2);
+		do _activeLevel.insert(0, 3, 2);
+		do _activeLevel.insert(0, 4, 2);
+		do _activeLevel.insert(0, 5, 2);
+		do _activeLevel.insert(0, 6, 2);
+		do _activeLevel.insert(0, 7, 2);
+		do _activeLevel.insert(0, 8, 2);
+		do _activeLevel.insert(0, 9, 2);
+		do _activeLevel.insert(0, 10, 2);
+		do _activeLevel.insert(0, 11, 2);
+		do _activeLevel.insert(0, 12, 2);
+		do _activeLevel.insert(0, 13, 2);
+		do _activeLevel.insert(0, 14, 2);
+		do _activeLevel.insert(0, 15, 2);
+		do _activeLevel.insert(0, 16, 2);
+		do _activeLevel.insert(0, 17, 2);
+		do _activeLevel.insert(0, 18, 2);
+		do _activeLevel.insert(0, 19, 2);
+		//line 1
+		do _activeLevel.insert(1, 0, 2);
+		do _activeLevel.insert(1, 3, 2);
+		do _activeLevel.insert(1, 4, 2);
+		do _activeLevel.insert(1, 8, 2);
+		do _activeLevel.insert(1, 9, 2);
+		do _activeLevel.insert(1, 10, 2);
+		do _activeLevel.insert(1, 11, 2);
+		do _activeLevel.insert(1, 14, 2);
+		do _activeLevel.insert(1, 16, 2);
+		do _activeLevel.insert(1, 19, 2);
+		//line 2
+		do _activeLevel.insert(2, 0, 2);
+		do _activeLevel.insert(2, 3, 2);
+		do _activeLevel.insert(2, 4, 2);
+		do _activeLevel.insert(2, 5, 2);
+		do _activeLevel.insert(2, 6, 2);
+		do _activeLevel.insert(2, 7, 2);
+		do _activeLevel.insert(2, 8, 2);
+		do _activeLevel.insert(2, 10, 2);
+		do _activeLevel.insert(2, 14, 2);
+		do _activeLevel.insert(2, 16, 2);
+		do _activeLevel.insert(2, 19, 2);
+		//line 3
+		do _activeLevel.insert(3, 0, 2);
+		do _activeLevel.insert(3, 2, 2);
+		do _activeLevel.insert(3, 4, 2);
+		do _activeLevel.insert(3, 6, 2);
+		do _activeLevel.insert(3, 14, 2);
+		do _activeLevel.insert(3, 16, 2);
+		do _activeLevel.insert(3, 17, 2);
+		do _activeLevel.insert(3, 19, 2);
+		//line 4
+		do _activeLevel.insert(4, 0, 2);
+		do _activeLevel.insert(4, 1, 2);
+		do _activeLevel.insert(4, 2, 2);
+		do _activeLevel.insert(4, 13, 2);
+		do _activeLevel.insert(4, 14, 2);
+		do _activeLevel.insert(4, 17, 2);
+		do _activeLevel.insert(4, 18, 2);
+		do _activeLevel.insert(4, 19, 2);
+		//line 5
+		do _activeLevel.insert(5, 0, 2);
+		do _activeLevel.insert(5, 2, 2);
+		do _activeLevel.insert(5, 4, 2);
+		do _activeLevel.insert(5, 6, 2);
+		do _activeLevel.insert(5, 14, 2);
+		do _activeLevel.insert(5, 16, 2);
+		do _activeLevel.insert(5, 17, 2);
+		do _activeLevel.insert(5, 19, 2);
+		//line 6
+		do _activeLevel.insert(6, 0, 2);
+		do _activeLevel.insert(6, 3, 2);
+		do _activeLevel.insert(6, 4, 2);
+		do _activeLevel.insert(6, 5, 2);
+		do _activeLevel.insert(6, 6, 2);
+		do _activeLevel.insert(6, 7, 2);
+		do _activeLevel.insert(6, 14, 2);
+		do _activeLevel.insert(6, 16, 2);
+		do _activeLevel.insert(6, 19, 2);
+		//line 7
+		do _activeLevel.insert(7, 0, 2);
+		do _activeLevel.insert(7, 3, 2);
+		do _activeLevel.insert(7, 8, 2);
+		do _activeLevel.insert(7, 12, 2);
+		do _activeLevel.insert(7, 13, 2);
+		do _activeLevel.insert(7, 14, 2);
+		do _activeLevel.insert(7, 16, 2);
+		do _activeLevel.insert(7, 19, 2);
+		//line 8 
+		do _activeLevel.insert(8, 0, 2);
+		do _activeLevel.insert(8, 1, 2);
+		do _activeLevel.insert(8, 2, 2);
+		do _activeLevel.insert(8, 3, 2);
+		do _activeLevel.insert(8, 4, 2);
+		do _activeLevel.insert(8, 5, 2);
+		do _activeLevel.insert(8, 6, 2);
+		do _activeLevel.insert(8, 7, 2);
+		do _activeLevel.insert(8, 8, 2);
+		do _activeLevel.insert(8, 9, 2);
+		do _activeLevel.insert(8, 10, 2);
+		do _activeLevel.insert(8, 11, 2);
+		do _activeLevel.insert(8, 12, 2);
+		do _activeLevel.insert(8, 14, 2);
+		do _activeLevel.insert(8, 15, 2);
+		do _activeLevel.insert(8, 16, 2);
+		do _activeLevel.insert(8, 17, 2);
+		do _activeLevel.insert(8, 18, 2);
+		do _activeLevel.insert(8, 19, 2);
+		
+		
+		//adding in powerups
+		do _activeLevel.insert(2, 2, 3);
+		do _activeLevel.insert(2, 17, 3);
+		do _activeLevel.insert(6, 2, 3);
+		do _activeLevel.insert(6, 17, 3);
+		*/
+		
+		do _activeLevel.insert(6, 9, 2);
+		
+		
+		//adding middle box
+		do _activeLevel.insert(4, 9, 4);
+		do _activeLevel.insert(4, 10, 5);
+		do _activeLevel.insert(4, 11, 4);
+		do _activeLevel.insert(5, 9, 4);
+		do _activeLevel.insert(5, 10, 4);
+		do _activeLevel.insert(5, 11, 4); 
+		return;
+	}
+	
+	
+	/**
+	 * Creating Level 2 Matrix
+	 */
+	method void initLevel2(){
+		let _gems = 0;
+		
+		// adding in bricks
+		// line 2
+		/*do _activeLevel.insert(1, 1, 1);
+		do _activeLevel.insert(1, 2, 1);
+		do _activeLevel.insert(1, 3, 1);
+		do _activeLevel.insert(1, 5, 1);
+		do _activeLevel.insert(1, 6, 1);
+		do _activeLevel.insert(1, 7, 1);
+		do _activeLevel.insert(1, 9, 1);
+		do _activeLevel.insert(1, 11, 1);
+		do _activeLevel.insert(1, 12, 1);
+		do _activeLevel.insert(1, 13, 1);
+		do _activeLevel.insert(1, 14, 1);
+		do _activeLevel.insert(1, 16, 1);
+		do _activeLevel.insert(1, 17, 1);
+		do _activeLevel.insert(1, 18, 1);
+		// line 2
+		do _activeLevel.insert(2, 1, 1);
+		do _activeLevel.insert(2, 2, 1);
+		do _activeLevel.insert(2, 3, 1);
+		do _activeLevel.insert(2, 5, 1);
+		do _activeLevel.insert(2, 6, 1);
+		do _activeLevel.insert(2, 7, 1);
+		do _activeLevel.insert(2, 9, 1);
+		do _activeLevel.insert(2, 11, 1);
+		do _activeLevel.insert(2, 12, 1);
+		do _activeLevel.insert(2, 13, 1);
+		do _activeLevel.insert(2, 14, 1);
+		do _activeLevel.insert(2, 16, 1);
+		do _activeLevel.insert(2, 17, 1);
+		do _activeLevel.insert(2, 18, 1);
+		// line 4
+		do _activeLevel.insert(4, 1, 1);
+		do _activeLevel.insert(4, 2, 1);
+		do _activeLevel.insert(4, 3, 1);
+		do _activeLevel.insert(4, 4, 1);
+		do _activeLevel.insert(4, 5, 1);
+		do _activeLevel.insert(4, 6, 1);
+		do _activeLevel.insert(4, 7, 1);
+		do _activeLevel.insert(4, 13, 1);
+		do _activeLevel.insert(4, 14, 1);
+		do _activeLevel.insert(4, 16, 1);
+		do _activeLevel.insert(4, 17, 1);
+		do _activeLevel.insert(4, 18, 1);
+		// line 5
+		do _activeLevel.insert(5, 14, 1);
+		do _activeLevel.insert(5, 16, 1);
+		// line 6
+		do _activeLevel.insert(6, 0, 1);
+		do _activeLevel.insert(6, 1, 1);
+		do _activeLevel.insert(6, 3, 1);
+		do _activeLevel.insert(6, 5, 1);
+		do _activeLevel.insert(6, 6, 1);
+		do _activeLevel.insert(6, 7, 1);
+		do _activeLevel.insert(6, 14, 1);
+		do _activeLevel.insert(6, 16, 1);
+		do _activeLevel.insert(6, 18, 1);
+		// line 7
+		do _activeLevel.insert(7, 3, 1);
+		do _activeLevel.insert(7, 7, 1);
+		do _activeLevel.insert(7, 8, 1);
+		do _activeLevel.insert(7, 10, 1);
+		do _activeLevel.insert(7, 11, 1);
+		do _activeLevel.insert(7, 12, 1);
+		do _activeLevel.insert(7, 18, 1);	
+		
+		// line 8
+		do _activeLevel.insert(8, 1, 1);
+		do _activeLevel.insert(8, 2, 1);
+		do _activeLevel.insert(8, 3, 1);
+		do _activeLevel.insert(8, 4, 1);
+		do _activeLevel.insert(8, 5, 1);
+		do _activeLevel.insert(8, 14, 1);
+		do _activeLevel.insert(8, 15, 1);
+		do _activeLevel.insert(8, 16, 1);
+		
+		//adding in dots
+		//line 0
+		do _activeLevel.insert(0, 1, 2);
+		do _activeLevel.insert(0, 2, 2);
+		do _activeLevel.insert(0, 3, 2);
+		do _activeLevel.insert(0, 4, 2);
+		do _activeLevel.insert(0, 5, 2);
+		do _activeLevel.insert(0, 6, 2);
+		do _activeLevel.insert(0, 7, 2);
+		do _activeLevel.insert(0, 8, 2);
+		do _activeLevel.insert(0, 9, 2);
+		do _activeLevel.insert(0, 10, 2);
+		do _activeLevel.insert(0, 11, 2);
+		do _activeLevel.insert(0, 12, 2);
+		do _activeLevel.insert(0, 13, 2);
+		do _activeLevel.insert(0, 14, 2);
+		do _activeLevel.insert(0, 15, 2);
+		do _activeLevel.insert(0, 16, 2);
+		do _activeLevel.insert(0, 17, 2);
+		do _activeLevel.insert(0, 18, 2);
+		do _activeLevel.insert(0, 19, 2);
+		//line 1
+		do _activeLevel.insert(1, 0, 2);
+		do _activeLevel.insert(1, 4, 2);
+		do _activeLevel.insert(1, 8, 2);
+		do _activeLevel.insert(1, 10, 2);
+		do _activeLevel.insert(1, 15, 2);
+		do _activeLevel.insert(1, 19, 2);
+		//line 2
+		do _activeLevel.insert(2, 0, 2);
+		do _activeLevel.insert(2, 4, 2);
+		do _activeLevel.insert(2, 8, 2);
+		do _activeLevel.insert(2, 10, 2);
+		do _activeLevel.insert(2, 15, 2);
+		do _activeLevel.insert(2, 19, 2);
+		//line 3
+		do _activeLevel.insert(3, 0, 2);
+		do _activeLevel.insert(3, 1, 2);
+		do _activeLevel.insert(3, 2, 2);
+		do _activeLevel.insert(3, 3, 2);
+		do _activeLevel.insert(3, 4, 2);
+		do _activeLevel.insert(3, 5, 2);
+		do _activeLevel.insert(3, 6, 2);
+		do _activeLevel.insert(3, 7, 2);
+		do _activeLevel.insert(3, 13, 2);
+		do _activeLevel.insert(3, 14, 2);
+		do _activeLevel.insert(3, 15, 2);
+		do _activeLevel.insert(3, 16, 2);
+		do _activeLevel.insert(3, 17, 2);
+		do _activeLevel.insert(3, 18, 2);
+		do _activeLevel.insert(3, 19, 2);
+		//line 4
+		do _activeLevel.insert(4, 0, 2);
+		//do _activeLevel.insert(4, 6, 2);
+		do _activeLevel.insert(4, 15, 2);
+		do _activeLevel.insert(4, 19, 2);
+		//line 5
+		do _activeLevel.insert(5, 0, 2);
+		do _activeLevel.insert(5, 1, 2);
+		do _activeLevel.insert(5, 2, 2);
+		do _activeLevel.insert(5, 3, 2);
+		do _activeLevel.insert(5, 4, 2);
+		do _activeLevel.insert(5, 5, 2);
+		do _activeLevel.insert(5, 6, 2);
+		do _activeLevel.insert(5, 7, 2);
+		do _activeLevel.insert(5, 13, 2);
+		do _activeLevel.insert(5, 15, 2);
+		do _activeLevel.insert(5, 17, 2);
+		do _activeLevel.insert(5, 18, 2);
+		do _activeLevel.insert(5, 19, 2);
+		//line 6
+		do _activeLevel.insert(6, 2, 2);
+		do _activeLevel.insert(6, 4, 2);
+		do _activeLevel.insert(6, 13, 2);
+		do _activeLevel.insert(6, 15, 2);
+		do _activeLevel.insert(6, 17, 2);
+		do _activeLevel.insert(6, 19, 2);
+		//line 7
+		do _activeLevel.insert(7, 0, 2);
+		do _activeLevel.insert(7, 1, 2);
+		do _activeLevel.insert(7, 2, 2);
+		do _activeLevel.insert(7, 4, 2);
+		do _activeLevel.insert(7, 5, 2);
+		do _activeLevel.insert(7, 6, 2);
+		do _activeLevel.insert(7, 9, 2);
+		do _activeLevel.insert(7, 13, 2);
+		do _activeLevel.insert(7, 14, 2);
+		do _activeLevel.insert(7, 15, 2);
+		do _activeLevel.insert(7, 16, 2);
+		do _activeLevel.insert(7, 17, 2);
+		do _activeLevel.insert(7, 19, 2);
+		//line 8 
+		do _activeLevel.insert(8, 6, 2);
+		do _activeLevel.insert(8, 7, 2);
+		do _activeLevel.insert(8, 8, 2);
+		do _activeLevel.insert(8, 9, 2);
+		do _activeLevel.insert(8, 10, 2);
+		do _activeLevel.insert(8, 11, 2);
+		do _activeLevel.insert(8, 12, 2);
+		do _activeLevel.insert(8, 13, 2);
+		do _activeLevel.insert(8, 17, 2);
+		do _activeLevel.insert(8, 18, 2);
+		
+		
+		//adding in powerups
+		do _activeLevel.insert(0, 0, 3);
+		do _activeLevel.insert(8, 0, 3);
+		do _activeLevel.insert(0, 19, 3);
+		do _activeLevel.insert(8, 19, 3);
+		*/
+		
+		do _activeLevel.insert(6, 9, 2);
+		
+		//adding middle box
+		do _activeLevel.insert(4, 9, 4);
+		do _activeLevel.insert(4, 10, 5);
+		do _activeLevel.insert(4, 11, 4);
+		do _activeLevel.insert(5, 9, 4);
+		do _activeLevel.insert(5, 10, 4);
+		do _activeLevel.insert(5, 11, 4);
+		
+		return;
+	}
+	
+	
+	/**
+	 * Creating Level 3 Matrix
+	 */
+	method void initLevel3(){
+			
+		// adding in bricks
+		// line 1
+		/*do _activeLevel.insert(1, 1, 1);
+		do _activeLevel.insert(1, 3, 1);
+		do _activeLevel.insert(1, 5, 1);
+		do _activeLevel.insert(1, 7, 1);
+		do _activeLevel.insert(1, 9, 1);
+		do _activeLevel.insert(1, 11, 1);
+		do _activeLevel.insert(1, 13, 1);
+		do _activeLevel.insert(1, 15, 1);
+		do _activeLevel.insert(1, 17, 1);
+		do _activeLevel.insert(1, 19, 1);
+		// line 3
+		do _activeLevel.insert(3, 1, 1);
+		do _activeLevel.insert(3, 3, 1);
+		do _activeLevel.insert(3, 5, 1);
+		do _activeLevel.insert(3, 7, 1);
+		do _activeLevel.insert(3, 13, 1);
+		do _activeLevel.insert(3, 15, 1);
+		do _activeLevel.insert(3, 17, 1);
+		do _activeLevel.insert(3, 19, 1);
+		// line 5
+		do _activeLevel.insert(5, 1, 1);
+		do _activeLevel.insert(5, 3, 1);
+		do _activeLevel.insert(5, 5, 1);
+		do _activeLevel.insert(5, 7, 1);
+		do _activeLevel.insert(5, 13, 1);
+		do _activeLevel.insert(5, 15, 1);
+		do _activeLevel.insert(5, 17, 1);
+		do _activeLevel.insert(5, 19, 1);
+		// line 7
+		do _activeLevel.insert(7, 1, 1);
+		do _activeLevel.insert(7, 3, 1);
+		do _activeLevel.insert(7, 5, 1);
+		do _activeLevel.insert(7, 7, 1);
+		do _activeLevel.insert(7, 9, 1);
+		do _activeLevel.insert(7, 11, 1);
+		do _activeLevel.insert(7, 13, 1);
+		do _activeLevel.insert(7, 15, 1);
+		do _activeLevel.insert(7, 17, 1);
+		do _activeLevel.insert(7, 19, 1);
+		
+		//adding in dots
+		//line 0
+		do _activeLevel.insert(0, 0, 2);
+		do _activeLevel.insert(0, 1, 2);
+		do _activeLevel.insert(0, 2, 2);
+		do _activeLevel.insert(0, 3, 2);
+		do _activeLevel.insert(0, 4, 2);
+		do _activeLevel.insert(0, 5, 2);
+		do _activeLevel.insert(0, 6, 2);
+		do _activeLevel.insert(0, 7, 2);
+		do _activeLevel.insert(0, 8, 2);
+		do _activeLevel.insert(0, 9, 2);
+		do _activeLevel.insert(0, 10, 2);
+		do _activeLevel.insert(0, 11, 2);
+		do _activeLevel.insert(0, 12, 2);
+		do _activeLevel.insert(0, 13, 2);
+		do _activeLevel.insert(0, 14, 2);
+		do _activeLevel.insert(0, 15, 2);
+		do _activeLevel.insert(0, 16, 2);
+		do _activeLevel.insert(0, 17, 2);
+		do _activeLevel.insert(0, 18, 2);
+		do _activeLevel.insert(0, 19, 2);
+		//line 1
+		do _activeLevel.insert(1, 0, 2);
+		do _activeLevel.insert(1, 2, 2);
+		do _activeLevel.insert(1, 4, 2);
+		do _activeLevel.insert(1, 6, 2);
+		do _activeLevel.insert(1, 8, 2);
+		do _activeLevel.insert(1, 10, 2);
+		do _activeLevel.insert(1, 12, 2);
+		do _activeLevel.insert(1, 14, 2);
+		do _activeLevel.insert(1, 16, 2);
+		do _activeLevel.insert(1, 18, 2);
+		//line 2
+		do _activeLevel.insert(2, 0, 2);
+		do _activeLevel.insert(2, 1, 2);
+		do _activeLevel.insert(2, 3, 2);
+		do _activeLevel.insert(2, 4, 2);
+		do _activeLevel.insert(2, 5, 2);
+		do _activeLevel.insert(2, 6, 2);
+		do _activeLevel.insert(2, 7, 2);
+		do _activeLevel.insert(2, 8, 2);
+		do _activeLevel.insert(2, 9, 2);
+		do _activeLevel.insert(2, 10, 2);
+		do _activeLevel.insert(2, 11, 2);
+		do _activeLevel.insert(2, 12, 2);
+		do _activeLevel.insert(2, 13, 2);
+		do _activeLevel.insert(2, 14, 2);
+		do _activeLevel.insert(2, 15, 2);
+		do _activeLevel.insert(2, 16, 2);
+		do _activeLevel.insert(2, 18, 2);
+		do _activeLevel.insert(2, 19, 2);
+		//line 3
+		do _activeLevel.insert(3, 0, 2);
+		do _activeLevel.insert(3, 2, 2);
+		do _activeLevel.insert(3, 4, 2);
+		do _activeLevel.insert(3, 6, 2);
+		do _activeLevel.insert(3, 14, 2);
+		do _activeLevel.insert(3, 16, 2);
+		do _activeLevel.insert(3, 18, 2);
+		//line 4
+		do _activeLevel.insert(4, 0, 2);
+		do _activeLevel.insert(4, 1, 2);
+		do _activeLevel.insert(4, 2, 2);
+		do _activeLevel.insert(4, 3, 2);
+		do _activeLevel.insert(4, 4, 2);
+		do _activeLevel.insert(4, 5, 2);
+		do _activeLevel.insert(4, 6, 2);
+		do _activeLevel.insert(4, 7, 2);
+		do _activeLevel.insert(4, 13, 2);
+		do _activeLevel.insert(4, 14, 2);
+		do _activeLevel.insert(4, 15, 2);
+		do _activeLevel.insert(4, 16, 2);
+		do _activeLevel.insert(4, 17, 2);
+		do _activeLevel.insert(4, 18, 2);
+		do _activeLevel.insert(4, 19, 2);
+		//line 5
+		do _activeLevel.insert(5, 0, 2);
+		do _activeLevel.insert(5, 2, 2);
+		do _activeLevel.insert(5, 4, 2);
+		do _activeLevel.insert(5, 6, 2);
+		do _activeLevel.insert(5, 14, 2);
+		do _activeLevel.insert(5, 16, 2);
+		do _activeLevel.insert(5, 18, 2);
+		//line 6
+		do _activeLevel.insert(6, 0, 2);
+		do _activeLevel.insert(6, 1, 2);
+		do _activeLevel.insert(6, 2, 2);
+		do _activeLevel.insert(6, 3, 2);
+		do _activeLevel.insert(6, 4, 2);
+		do _activeLevel.insert(6, 5, 2);
+		do _activeLevel.insert(6, 6, 2);
+		do _activeLevel.insert(6, 7, 2);
+		do _activeLevel.insert(6, 13, 2);
+		do _activeLevel.insert(6, 14, 2);
+		do _activeLevel.insert(6, 15, 2);
+		do _activeLevel.insert(6, 16, 2);
+		do _activeLevel.insert(6, 17, 2);
+		do _activeLevel.insert(6, 18, 2);
+		do _activeLevel.insert(6, 19, 2);
+		//line 7
+		do _activeLevel.insert(7, 0, 2);
+		do _activeLevel.insert(7, 2, 2);
+		do _activeLevel.insert(7, 4, 2);
+		do _activeLevel.insert(7, 6, 2);
+		do _activeLevel.insert(7, 8, 2);
+		do _activeLevel.insert(7, 10, 2);
+		do _activeLevel.insert(7, 12, 2);
+		do _activeLevel.insert(7, 14, 2);
+		do _activeLevel.insert(7, 16, 2);
+		do _activeLevel.insert(7, 18, 2);
+		//line 8 
+		do _activeLevel.insert(8, 0, 2);
+		do _activeLevel.insert(8, 1, 2);
+		do _activeLevel.insert(8, 3, 2);
+		do _activeLevel.insert(8, 4, 2);
+		do _activeLevel.insert(8, 5, 2);
+		do _activeLevel.insert(8, 6, 2);
+		do _activeLevel.insert(8, 7, 2);
+		do _activeLevel.insert(8, 8, 2);
+		do _activeLevel.insert(8, 9, 2);
+		do _activeLevel.insert(8, 10, 2);
+		do _activeLevel.insert(8, 11, 2);
+		do _activeLevel.insert(8, 12, 2);
+		do _activeLevel.insert(8, 13, 2);
+		do _activeLevel.insert(8, 14, 2);
+		do _activeLevel.insert(8, 15, 2);
+		do _activeLevel.insert(8, 16, 2);
+		do _activeLevel.insert(8, 18, 2);
+		do _activeLevel.insert(8, 19, 2);
+		
+		
+		//adding in powerups
+		do _activeLevel.insert(2, 2, 3);
+		do _activeLevel.insert(2, 17, 3);
+		do _activeLevel.insert(8, 2, 3);
+		do _activeLevel.insert(8, 17, 3);
+		
+		*/
+		
+		do _activeLevel.insert(6, 9, 2);
+		
+		
+		//adding middle box
+		do _activeLevel.insert(4, 9, 4);
+		do _activeLevel.insert(4, 10, 5);
+		do _activeLevel.insert(4, 11, 4);
+		do _activeLevel.insert(5, 9, 4);
+		do _activeLevel.insert(5, 10, 4);
+		do _activeLevel.insert(5, 11, 4);
+
+		return;
+	}
+	
+	
+	/**
+	 * draws the level on the screen
+	 */
+	method void drawLevel(){
+		var int x, y;		
+		
+		do Screen.setColor(true);
+		let x = 0;
+		while (x<9){
+			let y = 0;
+			while (y<20){
+				// draws bricks
+				if (_activeLevel.getType(x,y)=1){
+					if (_brickType = 3){
+						do brick4D(x,y);
+					}
+					if (_brickType = 4){
+						do brick3D(x,y);
+					}
+					if (_brickType = 5){
+						do brick2D(x,y);
+					}
+					if (_brickType=6){
+						do normalBrick(x,y);
+					}
+				}
+				//draws dots
+				if (_activeLevel.getType(x,y)=2){
+					let _gems = _gems + 1;
+					do drawDot(x,y);
+				}
+				// draws powerups
+				if (_activeLevel.getType(x,y)=3){
+					let _gems = _gems + 1;
+					do drawPowerUp(x,y);
+				}
+				let y = y + 1;
+			}
+			let x = x + 1;
+		}
+		
+		return;
+	}
+	
+	/**
+	 * draw normal brick
+	 */
+	method void normalBrick(int x, int y){
+		do Screen.setColor(true);
+		do Screen.drawRectangle(7+(y*25), 14+(x*25), 32+(y*25), 39+(x*25));	
+		return;
+	}
+	
+	/**
+	 * draw 4d brick
+	 */
+	method void brick4D(int x, int y){
+		do Screen.setColor(true);
+		do Screen.drawLine(0+7+(y*25), 0+14+(x*25), 7+24+(y*25), 14+0+(x*25));
+		do Screen.drawLine(0+7+(y*25), 8+14+(x*25), 7+24+(y*25), 8+14+(x*25));
+		do Screen.drawLine(0+7+(y*25), 16+14+(x*25), 24+7+(y*25), 16+14+(x*25));
+		do Screen.drawLine(0+7+(y*25), 24+14+(x*25), 24+7+(y*25), 24+14+(x*25));
+				
+		do Screen.drawLine(12+7+(y*25), 0+14+(x*25),12+(y*25),8+14+(x*25));
+		do Screen.drawLine(6+7+(y*25), 8+14+(x*25),6+(y*25),16+14+(x*25));
+		do Screen.drawLine(18+7+(y*25), 8+14+(x*25),18+(y*25),16+14+(x*25));
+		do Screen.drawLine(12+7+(y*25), 16+14+(x*25),12+(y*25),24+14+(x*25));
+ 
+		do Screen.drawLine(24+7+(y*25), 0+14+(x*25),24+(y*25),8+(x*25));
+		do Screen.drawLine(24+7+(y*25), 16+14+(x*25),24+(y*25),24+(x*25));
+		do Screen.drawLine(0+7+(y*25), 0+14+(x*25),0+(y*25),8+(x*25));
+		do Screen.drawLine(0+7+(y*25), 16+14+(x*25),0+(y*25),24+(x*25));
+		return;
+	}
+	
+	
+	/**
+	 * draw 3d brick
+	 */
+	method void brick3D(int x, int y){
+		do Screen.setColor(true);
+		do Screen.drawLine(0+7+(y*25), 0+14+(x*25), 7+24+(y*25), 14+0+(x*25));
+		do Screen.drawLine(0+7+(y*25), 8+14+(x*25), 7+24+(y*25), 8+14+(x*25));
+		do Screen.drawLine(0+7+(y*25), 16+14+(x*25), 24+7+(y*25), 16+14+(x*25));
+		do Screen.drawLine(0+7+(y*25), 24+14+(x*25), 24+7+(y*25), 24+14+(x*25));
+				
+		do Screen.drawLine(12+7+(y*25), 0+14+(x*25),12+7+(y*25),8+14+(x*25));
+		do Screen.drawLine(6+7+(y*25), 8+14+(x*25),6+7+(y*25),16+14+(x*25));
+		do Screen.drawLine(18+7+(y*25), 8+14+(x*25),18+7+(y*25),16+14+(x*25));
+		do Screen.drawLine(12+7+(y*25), 16+14+(x*25),12+7+(y*25),24+14+(x*25));
+ 
+		do Screen.drawLine(24+7+(y*25), 0+14+(x*25),24+(y*25),8+(x*25));
+		do Screen.drawLine(24+7+(y*25), 16+14+(x*25),24+(y*25),24+(x*25));
+		do Screen.drawLine(0+7+(y*25), 0+14+(x*25),0+(y*25),8+(x*25));
+		do Screen.drawLine(0+7+(y*25), 16+14+(x*25),0+(y*25),24+(x*25));	
+	
+		return;
+	}
+	
+	
+	/**
+	 * draw 2d brick -classic
+	 */
+	method void brick2D(int x, int y){
+		do Screen.setColor(true);
+		do Screen.drawLine(0+7+(y*25), 0+14+(x*25), 7+24+(y*25), 14+0+(x*25));
+		do Screen.drawLine(0+7+(y*25), 8+14+(x*25), 7+24+(y*25), 8+14+(x*25));
+		do Screen.drawLine(0+7+(y*25), 16+14+(x*25), 24+7+(y*25), 16+14+(x*25));
+		do Screen.drawLine(0+7+(y*25), 24+14+(x*25), 24+7+(y*25), 24+14+(x*25));
+			
+		do Screen.drawLine(12+7+(y*25), 0+14+(x*25),12+7+(y*25),8+14+(x*25));
+		do Screen.drawLine(6+7+(y*25), 8+14+(x*25),6+7+(y*25),16+14+(x*25));
+		do Screen.drawLine(18+7+(y*25), 8+14+(x*25),18+7+(y*25),16+14+(x*25));
+		do Screen.drawLine(12+7+(y*25), 16+14+(x*25),12+7+(y*25),24+14+(x*25));
+ 
+		do Screen.drawLine(24+7+(y*25), 0+14+(x*25),24+7+(y*25),8+14+(x*25));
+		do Screen.drawLine(0+7+(y*25), 0+14+(x*25),0+7+(y*25),8+14+(x*25));
+		do Screen.drawLine(24+7+(y*25), 16+14+(x*25),24+7+(y*25),24+14+(x*25));
+		do Screen.drawLine(0+7+(y*25), 16+14+(x*25),0+7+(y*25),24+14+(x*25));
+	
+		return;
+	}
+	
+	
+		/**
+	 * draw dot
+	 */
+	method void drawDot(int x,int y){
+		do Screen.setColor(true);
+		do Screen.drawCircle(7+(y*25)+12, 14+(x*25)+12, 2);
+		return;
+	}
+	
+	/**
+	 * draw powerUp
+	 */
+	method void drawPowerUp(int x,int y){
+		do Screen.setColor(true);
+		do Screen.drawCircle(7+(y*25)+12, 14+(x*25)+12, 4);
+		do Screen.setColor(false);
+		do Screen.drawCircle(7+(y*25)+12, 14+(x*25)+12, 3);
+		do Screen.setColor(true);
+		do Screen.drawCircle(7+(y*25)+12, 14+(x*25)+12, 2);
+		return;
+	}
+	
+	
+	/**
+	 * draws the center box properly
+	 */
+	method void drawEnemyBox(){
+		do Screen.setColor(true);
+		do Screen.drawRectangle(7+(9*25), 14+(4*25), 7+(12*25), 14+(6*25));
+		do Screen.setColor(false);
+		do Screen.drawRectangle(9+(9*25), 16+(4*25), 5+(12*25), 12+(6*25));
+		do Screen.drawLine(8+(10*25),15+(4*25), 8+(11*25),15+(4*25));
+		do Screen.setColor(true);
+		return;
+	}
+	
+	
+	/**
+	 * decreases the number of remaining gems;
+	 */
+	method void decreaseGem(){
+		if (~(_gems = 0)){
+			let _gems = _gems - 1;
+			do StatusBar.updateGems(_gems);
+		}
+		return;
+	}
+	
+	/**
+	 * true if there are no more gems in the board (=level is over)
+	 */
+	method boolean noMoreGems(){
+		return (_gems = 0);
+	}
+	
+	
+	/**
+	 * return true if it's a dot
+	 */
+	method boolean isDot(int x, int y){
+		return (_activeLevel.getType(x,y) = 2);
+	}
+	
+	/**
+	 * true if it's powerUp
+	 */
+	method boolean isPowerUp(int x, int y){
+		return (_activeLevel.getType(x,y) = 3);
+	}
+	
+		
+	/**
+	 * Checks if the given co-ordinates are legal move.
+	 */
+	method boolean checkMove(int x, int y){
+		var boolean illegalMove;
+		var int type;
+		let illegalMove = false;
+		
+		// if out of bounds - illegal move 
+		if (((x < 0) | (y < 0)) | ((x > 8) | (y > 19))){
+			return true;
+		}
+		
+		// otherwise checks if it hits a brick
+		let type = _activeLevel.getType(x, y);
+		if ((type = 1) | ((type = 4) | (type = 5))){
+			let illegalMove = true;
+		}
+		
+		return illegalMove;
+	}
+	
+	
+	/**
+	 * update board after a player or an alien moved
+	 * type = 0 <=> player; type = 1 <=> Alien
+	 */
+	method void updateBoard(int x, int y, int type){
+		var int cellType;
+		let cellType = _activeLevel.getType(x,y);
+		if (type = 0){
+			if (cellType = 2){
+				do _activeLevel.insert(x,y,0);
+				return;
+			}if (cellType = 3){
+				do _activeLevel.insert(x,y,0);
+				return;
+			}
+		}if (type = 1){
+			if (cellType = 2){
+				do drawDot(x,y);
+			}else{
+				if (cellType = 3){
+					do drawPowerUp(x,y);
+				}
+			}
+		}
+		return;
+	}	
+			
+	
+	/**	
+	 * dtor:
+	 */
+	method void dispose(){
+		do _activeLevel.dispose();
+		do Memory.deAlloc(this);
+		return;
+	}
+ }

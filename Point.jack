@@ -1,0 +1,88 @@
+/**
+ * Point class - an object for the co-ordinates (x,y)
+ */
+
+class Point{
+
+	/**
+	 * object fields
+	 */
+	field int _x;
+	field int _y;
+	
+	/**
+	 * default constructor
+	 */
+	constructor Point new(int x, int y){
+		let _x = x;
+		let _y = y;
+		return this;
+	}	
+	
+	/**
+	 *	returns X
+	 */
+	method int getX(){
+		return _x;
+	}
+	
+	/**
+	* returns Y
+	*/
+	method int getY(){
+		return _y;
+	}
+	
+	/**
+	 * sets X
+	 */
+	method void setX(int x){
+		let _x = x;
+		return;
+	}
+	
+	/**
+	 * sets Y 
+	 */
+	method void setY(int y){
+		let _y = y;
+		return;
+	}
+	
+	/**
+	 * sets point to x,y
+	 */
+	method void set(int x, int y){
+		let _x = x;
+		let _y = y;
+		return;
+	}
+	
+	
+	/**
+	 * check if points equal
+	 */
+	method boolean checkEqual(Point pnt){
+	
+		var int x, y;
+		var boolean illegalMove;
+	
+		let illegalMove = false;
+		
+		let x = pnt.getX();
+		let y = pnt.getY();
+		if ((_x = x) & (_y = y)){
+			let illegalMove = true;
+		}
+		return illegalMove;
+	}
+	
+	
+	/**
+	 *	destructor
+	 */
+	method void dispose(){
+		do Memory.deAlloc(this);
+		return;
+	}
+}

@@ -1,0 +1,158 @@
+function Matrix.new 0
+push constant 1
+call Memory.alloc 1
+pop pointer 0
+push constant 9
+call Array.new 1
+pop this 0
+push constant 0
+push this 0
+add
+push constant 20
+call Array.new 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 1
+push this 0
+add
+push constant 20
+call Array.new 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 2
+push this 0
+add
+push constant 20
+call Array.new 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 3
+push this 0
+add
+push constant 20
+call Array.new 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 4
+push this 0
+add
+push constant 20
+call Array.new 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 5
+push this 0
+add
+push constant 20
+call Array.new 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 6
+push this 0
+add
+push constant 20
+call Array.new 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 7
+push this 0
+add
+push constant 20
+call Array.new 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 8
+push this 0
+add
+push constant 20
+call Array.new 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push pointer 0
+return
+function Matrix.insert 1
+push argument 0
+pop pointer 0
+push argument 1
+push this 0
+add
+pop pointer 1
+push that 0
+pop local 0
+push argument 2
+push local 0
+add
+push argument 3
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 0
+return
+function Matrix.getType 1
+push argument 0
+pop pointer 0
+push argument 1
+push this 0
+add
+pop pointer 1
+push that 0
+pop local 0
+push argument 2
+push local 0
+add
+pop pointer 1
+push that 0
+return
+function Matrix.dispose 2
+push argument 0
+pop pointer 0
+push constant 0
+pop local 0
+label WHILE_EXP0
+push local 0
+push constant 9
+lt
+not
+if-goto WHILE_END0
+push local 0
+push this 0
+add
+pop pointer 1
+push that 0
+pop local 1
+push local 1
+call Array.dispose 1
+pop temp 0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push this 0
+call Array.dispose 1
+pop temp 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return

@@ -1,0 +1,198 @@
+/**
+ * Player Class - handles the player's movement and state
+ */
+ 
+ class Player{
+	// private object fields
+	field int _level;
+	field int _lives;
+	field Point _squareFacePos;
+	field int _points;
+	
+	/**
+	 *	default constructor
+	 */
+	constructor Player new(int level){
+		let _squareFacePos = Point.new(6, 10);
+		do drawFace();
+		let _lives = 3;
+		let _level = level;
+		let _points = 0;
+		return this;
+	}
+ 
+ 
+	/**
+	 * reset player to initial position in case of new lvl or player died
+	 */
+	method void reset(){
+		//do cleanFace();	
+		do _squareFacePos.set(6,10);
+		do drawFace();
+		return;
+	}
+ 
+			
+	/**
+	 * return player lives
+	 */
+	method int getLives(){
+		return _lives;
+	}
+	
+	/**
+	 * checks if player lost all lives - returns true
+	 */
+	method boolean gameOver(){
+		if (_lives < 0){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * decreases the player's lives by 1
+	 */
+	method void decreaseLive(){
+		let _lives = _lives - 1;
+		return;
+	}
+		
+	/**
+	 * add points to player score
+	 */
+	method void updatePoints(int points){
+		let _points = _points + points;
+		do StatusBar.updatePoints(_points);
+		return;
+	}
+	
+	/**
+	 * return squareFace score
+	 */
+	method int getPoints(){
+		return _points;
+	}
+	
+	
+	/**
+	 * increase level
+	 */
+	method void increaseLevel(){
+		let _level = _level +1;
+		return;
+	}
+	
+	/**
+	 * return square Face level
+	 */
+	method int getLevel(){
+		return _level;
+	}
+	
+	
+	/**
+	 * draws SquareFace its current position
+	 */
+	method void drawFace(){
+		var int x, y;
+		let x = _squareFacePos.getX();
+		let y = _squareFacePos.getY();
+		
+		// squareFace face
+		do Screen.setColor(true);
+		do Screen.drawRectangle(11+(y*25), 17 + (x*25), 5+(y*25)+24, 11+(x*25)+24);
+		do Screen.setColor(false);
+		do Screen.drawRectangle(12+(y*25), 18 + (x*25), 4+(y*25)+24, 10+(x*25)+24);	
+				
+		//glasses + eyes
+		do Screen.setColor(true);
+		do Screen.drawRectangle(5+(y*25)+6,11+(x*25)+11,5+(y*25)+13,11+(x*25)+ 15);
+		do Screen.drawRectangle(5+(y*25)+17,11+(x*25)+11,5+(y*25)+24,11+(x*25)+ 15);
+		do Screen.setColor(false);
+		do Screen.drawRectangle(5+(y*25)+7,11+(x*25)+12,5+(y*25)+12,11+(x*25)+ 14);
+		do Screen.drawRectangle(5+(y*25)+18,11+(x*25)+12,5+(y*25)+23,11+(x*25)+ 14);
+		do Screen.setColor(true);
+		do Screen.drawLine(5+(y*25)+13,11+(x*25)+12,5+(y*25)+17,11+(x*25)+12);
+		do Screen.setColor(true);
+		do Screen.drawCircle(5+(y*25)+10,11+(x*25)+13, 1);
+		do Screen.drawCircle(5+(y*25)+21,11+(x*25)+13, 1);
+		//mouth
+		do Screen.setColor(true);
+		do Screen.drawLine(5+(y*25)+8,11+(x*25)+18,5+(y*25)+15,11+(x*25)+21);
+		do Screen.drawLine(5+(y*25)+22,11+(x*25)+18,5+(y*25)+15,11+(x*25)+21);
+			
+		return;
+	}
+	
+	/**
+	 *  draw squareFace killed state
+	 */
+	method void drawKilled(){
+		var int x, y;
+		let x = _squareFacePos.getX();
+		let y = _squareFacePos.getY();
+		do Screen.setColor(true);
+		do Screen.drawRectangle(11+(y*25), 17 + (x*25), 5+(y*25)+24, 11+(x*25)+24);
+		do Screen.setColor(false);
+		// square face eyes
+		do Screen.drawCircle(5 +(y*25) + 10, 11 + 10+(x*25), 2);
+		do Screen.drawCircle(5+(y*25) + 20 , 11 + 10+(x*25), 2);
+		//squareFace mouth x
+		do Screen.drawLine(5+(y*25)+11,15+11+(x*25),5+(y*25)+19,20+11+(x*25));
+		do Screen.drawLine(5+(y*25)+11,11+20+(x*25),5+(y*25)+19,15+11+(x*25));
+		return;
+	}
+	
+	
+	/**
+	* cleans the face of SquareFace, after moving
+	*/
+	method void cleanFace(){
+		var int x, y;
+		let x = _squareFacePos.getX();
+		let y = _squareFacePos.getY();
+		
+		do Screen.setColor(false);
+		do Screen.drawRectangle(11+(y*25), 17 + (x*25), 5+(y*25)+24, 11+(x*25)+24);
+		
+		return;
+	}
+	
+	/**
+	 * move SquareFace to x,y
+	 */
+	method void moveSquareFace(int x, int y){
+	
+		do cleanFace();	
+		do _squareFacePos.set(x,y);
+		do drawFace();
+		return;
+	}
+	
+	/**
+	 * sets player's new position 
+	 */
+	method void setPos(Point pos){
+		do _squareFacePos.set(pos.getX(),pos.getY());
+		return;	
+	}
+	
+	
+	/**
+	 * return current position
+	 */
+	method Point returnCurPos(){
+		return _squareFacePos;
+	}
+	
+	
+	/**
+	 * object destructor
+	 */
+	method void dispose(){
+		do _squareFacePos.dispose();
+		do Memory.deAlloc(this);
+		return;
+	}
+ }

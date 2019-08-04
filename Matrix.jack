@@ -1,0 +1,67 @@
+/**
+ * Matrix class - handles the board matrix.
+ * 0 - Empty
+ * 1 - Brick
+ * 2 - Dot
+ * 3 - Powerup
+ * 4 - middle box wall
+ * 5 - middle box entrance
+ */
+class Matrix{
+	field Array matrix;
+	
+	/**
+	 * creates a 9x20 matrix
+	 */
+	constructor Matrix new(){
+		let matrix = Array.new(9);
+		let matrix[0] = Array.new(20);
+		let matrix[1]= Array.new(20);
+		let matrix[2] = Array.new(20);
+		let matrix[3] = Array.new(20);		
+		let matrix[4] = Array.new(20);
+		let matrix[5] = Array.new(20);
+		let matrix[6] = Array.new(20);
+		let matrix[7] = Array.new(20);
+		let matrix[8] = Array.new(20);
+		return this;
+	}
+	
+	/**
+	 * insert value into [x,y]
+	 */
+	method void insert(int x, int y, int value){
+		var Array tmp;
+		
+		let tmp = matrix[x];
+		let tmp[y] = value;
+		return;
+	}
+	
+	/**
+	 * returns the valuse of place x,y
+	 */
+	method int getType(int x, int y){
+		var Array tmp;
+		
+		let tmp = matrix[x];
+		return tmp[y];
+	}
+	
+	/**
+	 * deallocates memory allocated for the matrix
+	 */
+	method void dispose(){
+		var int i;
+		var Array tmp;
+		let i = 0;
+		while (i<9){
+			let tmp = matrix[i];
+			do tmp.dispose();
+			let i = i+1;
+		}
+		do matrix.dispose();
+		do Memory.deAlloc(this);
+		return;
+	}
+}

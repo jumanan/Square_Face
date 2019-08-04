@@ -1,0 +1,101 @@
+/**
+ * Statusbar class - handles the game's status bar.
+ */
+class StatusBar{
+	
+	/**
+	 * prints status bar with its fields
+	 */
+	function void output(){
+		do Screen.setColor(true);
+		do Screen.drawLine(0, 240, 511, 240);
+		do Output.moveCursor(22, 1);
+		do Output.printString("Level: ");
+		do Output.printString("     Lives: ");	
+		do Output.printString("     Score: ");
+		do Output.moveCursor(22,50);
+		do Output.printString("Gems:");
+		//do Output.moveCursor(22,60);
+		//do Output.printString("M&J");
+		return;
+	}
+		
+	/**
+	 *	update the level in status bar
+	 */
+	function void updateLevel(int level){
+		do Output.moveCursor(22, 7);
+		do Output.printInt(level);
+		return;
+	}
+	
+	/**
+	 * update lives in status var
+	 */
+	function void updateLives(int lives){
+		do Output.moveCursor(22, 19);
+		do Output.printInt(lives);
+		return;
+	}
+	
+	/**
+	 * update points in status bar
+	 */
+	function void updatePoints(int points){
+		do Output.moveCursor(22, 31);
+		do Output.printInt(points);
+		return;
+	}	
+	
+	/**
+	 *update number of movements made, in status bar
+	 */
+	function void updateMovNum(int mvm){
+		do Output.moveCursor(22, 59);
+		do Output.printString("     ");
+		do Output.moveCursor(22, 59);
+		do Output.printInt(mvm);
+		return;
+	}
+	
+	/**
+	 * print Done and update fields
+	*/	 
+	function void levelDone(){
+		do Output.moveCursor(22,40);
+		do Output.printString("DONE");
+		do Sys.wait(500);
+		/*do Output.moveCursor(22,40);
+		do Output.printString("    ");
+		do Sys.wait(500);
+		//update movement
+		do StatusBar.updateMovNum(0);*/
+		
+		return;
+	}
+	
+	/**
+	 * print pause in status bar when paused
+	*/
+	function void pause(){
+		do Output.moveCursor(22,40);
+		do Output.printString("PAUSED");
+		do Sys.wait(500);
+		do Output.moveCursor(22,40);
+		do Output.printString("      ");
+		do Sys.wait(500);
+		return;
+	}
+	
+	/**
+	 * update gems field in status bar
+	 */
+	function void updateGems(int gems){
+			do Output.moveCursor(22,55);
+			do Output.printString("   ");
+			do Output.moveCursor(22,55);
+			do Output.printInt(gems);
+			return;
+	}
+	
+}

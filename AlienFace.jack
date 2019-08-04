@@ -1,0 +1,131 @@
+/**
+ * AlienFace Class - handles the movement and the state of an alien
+ */
+class AlienFace{
+	field int _counter;// to check when to move
+	field int _cycle; //determines how often the alien moves
+	field int _curCycle;
+	field Point _pos;//alien position
+	field Point _startPos;
+	field int _startDelay;
+	
+	/**
+	 *ctor: 
+	 */
+	constructor AlienFace new(int x,int y,int startDelay, int cycle){
+		let _counter = startDelay;
+		let _startDelay = startDelay;
+		let _cycle = cycle;
+		let _curCycle = cycle;
+		let _pos = Point.new(x,y);
+		let _startPos = Point.new(x,y);
+		do drawAlien();
+		return this;
+	}
+
+	/**
+	 * sets the alien in fear state
+	 */
+	method void fear(){
+		let _curCycle = _cycle * 2;
+		do drawAlien();
+		return;
+	}
+	
+	/**
+	 * removes fear state
+	 */
+	method void unFear(){
+		let _curCycle = _cycle;
+		let _counter = 0;
+		do drawAlien();
+		return;
+	}
+	
+	/**
+	 * reset alien to start state
+	 */
+	method void reset(){
+		do cleanFace();
+		let _curCycle = _cycle;
+		do _pos.set(_startPos.getX(),_startPos.getY());
+		do drawAlien();
+		let _counter = _startDelay;
+		return;
+	}
+		
+	/**
+	 * return alien position
+	 */
+	method Point getPos(){
+		return _pos;
+	}
+	
+	/**
+	 * return true if alien should move in this cycle, updates counter accordingly
+	 */
+	method boolean isTurn(){
+		if (_counter = _curCycle){
+			let _counter = 1;
+			return true;
+		}
+		let _counter = _counter + 1;
+		return false;
+	}
+	
+	/**
+	 * move the alien to x,y
+	 */
+	method void moveTo(int x, int y){
+		do cleanFace();
+		do _pos.set(x,y);
+		do drawAlien();
+		return;
+	}
+	
+	/**
+	 * draw alien
+	 */
+	method void drawAlien(){
+		var int x,y;
+		let x = _pos.getX();
+		let y = _pos.getY();
+		
+		do Screen.setColor(true);
+		do Screen.drawCircle(7 + 12 + (y *25), 14 + 12 +(x * 25), 8);
+		do Screen.setColor(false);
+		do Screen.drawCircle(7 + 7 + (y*25) ,14 + 7 + (x*25),2);
+		do Screen.drawCircle(7 + 17 + (y * 25),14 + 7 + (x * 25),2);
+		if (~(_curCycle = _cycle)){ //fear state
+			do Screen.drawLine(7 + (y*25) + 6,14 + (x *25) + 18,7 + (y*25) + 9,14 + (x *25) + 15);
+			do Screen.drawLine(7 + (y*25) + 9,14 + (x *25) + 15, 7 + (y*25) + 12,14 + (x *25) + 18);
+			do Screen.drawLine(7 + (y*25) + 12,14 + (x *25) + 18,7 + (y*25) + 15,14 + (x *25) + 15);
+			do Screen.drawLine(7 + (y*25) + 15,14 + (x *25) + 15,7 + (y*25) + 18,14 + (x *25) + 18);
+		}
+		return;
+	}
+
+	/**
+	 * removes the alien, after it moves
+	 */
+	method void cleanFace(){
+		var int x, y;
+		let x = _pos.getX();
+		let y = _pos.getY();
+		
+		do Screen.setColor(false);
+		do Screen.drawRectangle(11+(y*25), 17 + (x*25), 5+(y*25)+24, 11+(x*25)+24);
+		
+		return;
+	}	
+	
+	/**
+	 * distructor
+	 */
+	method void dispose(){
+		do _pos.dispose();
+		do _startPos.dispose();
+		do Memory.deAlloc(this);
+		return;
+	}
+}

@@ -1,0 +1,408 @@
+class Main{
+
+/**
+ * 1 = Start Game
+ * 2 = Options
+ * 3 = Help
+ * 4 = About
+ * 5 = Quit
+ */
+ static int _difficulty, _brickType, _levelNum;
+ 
+ /**
+  * main fnction:
+  */
+ function void main(){
+	/**
+		 * Difficulty:
+		 * 0 = Easy
+		 * 1 = Normal
+		 * 2 = Hard
+		 * Brick Type:
+		 * 3 = 4D
+		 * 4 = 3D
+		 * 5 = 2D
+		 * 6 = Normal
+		 * Level Number:
+		 * 7 = 1
+		 * 8 = 2
+		 * 9 = 3
+		 */
+	var int pick;
+	var SquareFaceGame squareFaceGame;
+	
+	let pick = 0;
+	let _difficulty = 1;
+	let _brickType = 5;
+	let _levelNum = 7;
+	
+	while (~(pick=5)){
+		let pick = Main.mainMenu();
+		
+		if (pick = 1){//run game
+			let squareFaceGame = SquareFaceGame.new((_levelNum-6),_difficulty,_brickType);
+        
+			do squareFaceGame.run();
+			do squareFaceGame.dispose();
+		}
+		if (pick = 2){// options menu
+			do Main.optionsMenu();
+		}
+		if (pick = 3){// help menu
+			do Main.helpMenu();
+		}
+		if (pick = 4){//About
+			do Main.quitAboutMsg();
+		}
+	}
+	do Main.quitAboutMsg();
+	do squareFaceGame.dispose();
+		return;
+	}
+
+/**
+ * mainMenu:
+ */
+ function int mainMenu(){
+ 
+	var int key, pick;
+	var boolean changeIt;
+	// init screen
+	do Main.initScreen();
+
+	do Output.moveCursor(4,17);
+	do Output.printString("SquareFace and the Aliens");
+	do Output.moveCursor(7,22);
+	do Output.printString("->");
+	do Output.moveCursor(7,25);
+	do Output.printString("Start Game");
+	do Output.moveCursor(9,25);
+	do Output.printString("Options");
+	do Output.moveCursor(11,25);
+	do Output.printString("Help");
+	do Output.moveCursor(13,25);
+	do Output.printString("About");
+	do Output.moveCursor(15,25);
+	do Output.printString("Quit");
+	
+	
+	let key = 0;
+	let changeIt = false;
+	let pick = 1;
+	while (~(key = 128)){
+		 let key = Memory.peek(24576);
+		
+		if (key = 131) { // move up
+                let pick = pick - 1;
+				let changeIt = true;
+				do Output.moveCursor(7+(pick*2),22);
+				do Output.printString("  ");
+            }
+        if (key = 133) { // move down
+				do Output.moveCursor(5+(pick*2),22);
+                let pick = pick + 1;
+				let changeIt = true;
+				do Output.printString("  ");
+			}
+		do Sys.wait(200);
+		
+		// revolving menu
+		if (pick = 0){
+			let pick = 5;
+		}
+		if (pick = 6){
+			let pick = 1;
+		}
+		if (changeIt){
+			do Output.moveCursor(5+(pick*2),22);
+			do Output.printString("->");
+			let changeIt = false;
+		}
+		do Output.moveCursor(20,1);
+		do Output.printInt(pick);
+		
+		}
+		return pick;
+	}
+	
+	/**
+	 * handel options menu
+	 */
+	function void optionsMenu(){
+	
+		/**
+		 * 0 = Easy
+		 * 1 = Normal
+		 * 2 = Hard
+		 * 3 = 4D
+		 * 4 = 3D
+		 * 5 = 2D
+		 * 6 = Normal
+		 * 7 = 1
+		 * 8 = 2
+		 * 9 = 3
+		 * 10 = Yes
+		 * 11 = No
+		 */
+		
+		var int difficulty, brickType, levelNum,i;
+		var int key, pick, itemPicked;
+		var Array arrayPos;
+		var boolean changeIt;
+		var Point tmpPnt;
+		
+		let arrayPos = Array.new(12);
+		do Main.initScreen();
+	
+		
+		do Output.moveCursor(4,17);
+		do Output.printString("SquareFace and the Aliens");
+		
+		do Output.moveCursor(9,3);
+		do Output.printString("->");
+		do Output.moveCursor(7,2);
+		do Output.printString("Options Menu");
+		
+		
+		do Output.moveCursor(8,4);
+		do Output.printString("Difficulty:");
+		do Output.moveCursor(9,6);
+		let arrayPos[0] = Point.new(9, 3);
+		do Output.printString("Easy");
+		do Output.moveCursor(9,14);
+		let arrayPos[1] = Point.new(9, 11);
+		do Output.printString("Normal");
+		do Output.moveCursor(9,24);
+		let arrayPos[2] = Point.new(9, 21);
+		do Output.printString("Hard");
+		
+		do Output.moveCursor(11,4);
+		do Output.printString("Brick Type:");
+		do Output.moveCursor(12,6);
+		let arrayPos[3] = Point.new(12, 3);
+		do Output.printString("4D");
+		do Output.moveCursor(12,12);
+		let arrayPos[4] = Point.new(12, 9);
+		do Output.printString("3D");
+		do Output.moveCursor(12,18);
+		let arrayPos[5] = Point.new(12, 15);
+		do Output.printString("2D");
+		do Output.moveCursor(12,24);
+		let arrayPos[6] = Point.new(12, 21);
+		do Output.printString("Normal");
+		
+		do Output.moveCursor(14,4);
+		do Output.printString("Level:");
+		do Output.moveCursor(15,6);
+		let arrayPos[7] = Point.new(15, 3);
+		do Output.printString("1");
+		do Output.moveCursor(15,11);
+		let arrayPos[8] = Point.new(15, 8);
+		do Output.printString("2");
+		do Output.moveCursor(15,16);
+		let arrayPos[9] = Point.new(15, 13);
+		do Output.printString("3");
+		
+		do Output.moveCursor(16,4);
+		do Output.printString("Save Settings:");
+		do Output.moveCursor(17,6);
+		do Output.printString("Yes");
+		let arrayPos[10] = Point.new(17, 3);
+		do Output.moveCursor(17,13);
+		let arrayPos[11] = Point.new(17, 10);
+		do Output.printString("No");
+		
+		let difficulty = _difficulty;
+		let brickType = _brickType;
+		let levelNum = _levelNum;
+		let key = 0;
+		let pick = 0;
+		let itemPicked = 0; // In loop = 0, Yes = 1, No = 2
+		
+		while (~(itemPicked > 0)){
+			let key = Memory.peek(24576);
+			
+			if (key = 131) { // move up
+					let tmpPnt = arrayPos[pick];
+					do Output.moveCursor(tmpPnt.getX(),tmpPnt.getY());
+					do Output.printString("  ");
+					let pick = pick - 1;
+					let changeIt = true;
+			}
+			if (key = 133) { // move down
+					let tmpPnt = arrayPos[pick];
+					do Output.moveCursor(tmpPnt.getX(),tmpPnt.getY());
+					do Output.printString("  ");
+					let pick = pick + 1;
+					let changeIt = true;
+				}
+			if (key = 128) { // option chosen
+				if (pick < 3){
+					let tmpPnt = arrayPos[difficulty];
+					do Output.moveCursor(tmpPnt.getX(),tmpPnt.getY()+2);
+					let difficulty = pick;
+				}
+				if ((pick < 7) & (pick > 2)){
+					let tmpPnt = arrayPos[brickType];
+					do Output.moveCursor(tmpPnt.getX(),tmpPnt.getY()+2);
+					let brickType = pick;
+				}
+				if ((pick > 6) & (pick < 10)){
+					let tmpPnt = arrayPos[levelNum];
+					do Output.moveCursor(tmpPnt.getX(),tmpPnt.getY()+2);
+					let levelNum = pick;
+				}
+				if (pick = 10){
+					let itemPicked = 1;
+				}
+				if (pick = 11){
+					let itemPicked = 2;
+				}
+			}
+			//drawing picked options
+			let tmpPnt = arrayPos[difficulty];
+			do Output.moveCursor(tmpPnt.getX(),tmpPnt.getY()+2);
+			do Output.printString("*");
+			let tmpPnt = arrayPos[brickType];
+			do Output.moveCursor(tmpPnt.getX(),tmpPnt.getY()+2);
+			do Output.printString("*");
+			let tmpPnt = arrayPos[levelNum];
+			do Output.moveCursor(tmpPnt.getX(),tmpPnt.getY()+2);
+			do Output.printString("*");
+			
+			do Sys.wait(200);
+			
+			// revolving menu
+			if (pick = -1){
+				let pick = 11;
+			}
+			if (pick = 12){
+				let pick = 0;
+			}
+			if (changeIt){
+				let tmpPnt = arrayPos[pick];
+				do Output.moveCursor(tmpPnt.getX(),tmpPnt.getY());
+				do Output.printString("->");
+				let changeIt = false;
+			}
+			do Output.moveCursor(20,2);
+			do Output.moveCursor(20,1);
+			do Output.printInt(pick);
+		}
+		if (itemPicked = 1){
+			let _difficulty = difficulty;
+			let _brickType = brickType;
+			let _levelNum = levelNum;
+		}
+		//dispose arrayPos
+		let i = 0;
+		while (i<12){
+			let tmpPnt = arrayPos[i];
+			do tmpPnt.dispose();
+			let i = i + 1;
+		}
+		do arrayPos.dispose();
+		return;
+	}
+	
+	/**
+	 * quit & about msg
+	 */
+	function void quitAboutMsg(){
+		var int counter;
+		
+		do Main.initScreen();
+	
+		do Output.moveCursor(4,20);
+		do Output.printString("SquareFace and the Aliens");
+		do Output.moveCursor(7,17);
+		do Output.printString("Game Designed by: Majeed & Jumana");
+		do Output.moveCursor(9,17);
+		do Output.printString("Graphics Designed by: Jumana");
+		do Output.moveCursor(11,17);
+		do Output.printString("Menus Designed by: Majeed");
+		do Output.moveCursor(13,17);
+		do Output.printString("Inspired by PAC-MAN - Namco 1980");
+		
+		
+		let counter = 0;
+		while (counter < 7){
+			do Output.moveCursor(20,1);
+			do Output.printInt(7-counter);
+			let counter = counter + 1;
+			do Sys.wait(1000);
+		}
+		return;
+	}
+	
+	
+	/**
+	 * help menu
+	 */
+	function void helpMenu(){
+		var int counter;
+		
+		do Main.initScreen();
+		do Output.moveCursor(4,20);
+		do Output.printString("SquareFace and the Aliens");
+		do Output.moveCursor(7,5);
+		do Output.printString("The Game:");
+		do Output.moveCursor(8,9);
+		do Output.printString("You are in control of SquareFace, the");
+		do Output.moveCursor(9,7);
+		do Output.printString("friendly face who is trying to save the world by");
+		do Output.moveCursor(10,7);
+		do Output.printString("collecting the gems that fuel the Alien ships.");
+		do Output.moveCursor(11,9);
+		do Output.printString("You need to avoid the evil Aliens who are trying");
+		do Output.moveCursor(12,7);
+		do Output.printString("to kill you in order to achieve the goal.");
+		do Output.moveCursor(13,5);
+		do Output.printString("Objective:");
+		do Output.moveCursor(14,9);
+		do Output.printString("Clear the map from gems to win.");
+		do Output.moveCursor(15,5);
+		do Output.printString("Power-ups:");
+		do Output.moveCursor(16,9);
+		do Output.printString("Those special gems, convert the evil Aliens into");
+		do Output.moveCursor(17,7);
+		do Output.printString("weaklings, for a short period of time, allowing you");
+		do Output.moveCursor(18,7);
+		do Output.printString("to kill them on the way!");
+		
+		let counter = 0;
+		while (counter < 10){
+			do Output.moveCursor(20,1);
+			do Output.printInt(9-counter);
+			let counter = counter + 1;
+			do Sys.wait(1000);
+		}
+		return;
+		}
+	
+	
+	/**
+	 * initalize screen
+	 */
+	function void initScreen(){
+		// init screen
+		do Screen.clearScreen();
+		do Screen.setColor(true);
+		do Screen.drawLine(6, 13, 6, 240);
+		do Screen.drawLine(6, 13, 507, 13);
+		do Screen.drawLine(507, 13, 507, 240);
+		do Screen.drawLine(6, 240, 507, 240);
+		do Output.moveCursor(20,60);
+		do Output.printString("M&J");
+		return;
+	}
+	
+	/**
+	 * print * on selected option
+	 */
+	function void selection(int x, int y){
+		do Output.moveCursor(x,y);
+		do Output.printString("*");
+		return;
+	}
+}

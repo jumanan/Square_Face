@@ -1,0 +1,30 @@
+/**
+ * class Random - used to get a random number
+ */
+class Random {
+    static int state;
+
+    /** This function should be called first with a "random" value. */
+    /* Suggestion: count the number of times a while loop looped till the */
+    /* user pressed some key to start the game - that's good enough. */
+
+    function void seed(int arg_seed) {
+        let state = arg_seed;
+		return;
+    }
+	/** Internal method */
+
+    function void nextState() {
+        // Relies on overflow behavior
+        let state = Math.abs((state * 16799) + 12345);
+		return;
+    }
+
+    /** will return an int in the range [0..max) */
+    /* Is very unrandom if max is a small power of 2 */
+
+    function int randint(int max) {
+		do Random.nextState();
+		return state-((state/max)*max); // state%max
+    }
+}

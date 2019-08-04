@@ -1,0 +1,477 @@
+/**
+ * SquareFaceGame class - handles the game 
+ */
+ 
+ class SquareFaceGame{
+	field SquareFaceBoard _squareFaceBoard; //game board
+	//number of cycles till powerUp is over; 0 if no powerUp
+	field int _powerUp;
+	field int _pwrDuration; //for different difficulty levels
+	field Player _player;
+	field Array _aliens; //4 aliens
+	static int _count;//count num of movements
+	
+	
+	/**
+	 * SquareFace game constructor
+	 */
+	constructor SquareFaceGame new(int level, int difficulty, int brickType){
+		do SquareFaceGame.levelSplash(level);
+		let _squareFaceBoard = SquareFaceBoard.new(level,brickType);
+		
+		//set difficulty lvl duration of player kill state
+		let _player = Player.new(level);
+		if (difficulty = 0){
+			let _pwrDuration = 60;
+		}else{
+			if (difficulty = 1){
+				let _pwrDuration = 30;
+			}else{
+				let _pwrDuration = 15;
+			}
+		}
+		
+		let _count = 0;
+		let _powerUp = 0;
+				
+		//initalize aliens
+		let _aliens = Array.new(4);
+		let _aliens[0] = AlienFace.new(4,9,-1,3);
+		let _aliens[1] = AlienFace.new(4,11,-4,3);
+		let _aliens[2] = AlienFace.new(5,9,-7,3);
+		let _aliens[3] = AlienFace.new(5,11,-10,3);
+		
+		return this;
+	}
+ 
+ 
+	/** 
+	 * handels starting the game, failing, winning, & quiting
+	 * returns 2 if player won all 3 lvls, 1 if he failed
+	 * 0 if player wants to quit
+	 */
+	method void run(){
+		var int status;
+		var int lvl;
+		let lvl = _player.getLevel();
+		
+		//0 for quit, 1 game over, 2 win
+		
+		let status = game();
+		
+		while (status = 2){
+			let lvl = _player.getLevel();
+				if (lvl = 3){//player won all 3 lvls
+					do SquareFaceGame.winSplash(_player.getPoints());
+					return;
+				}else{
+					
+					//do StatusBar.levelDone();	
+					
+					do _player.increaseLevel();
+					let lvl = lvl +1;
+					do SquareFaceGame.levelSplash(lvl);
+					
+					do _squareFaceBoard.nextLevel(lvl);
+					do resetAliens();
+					do _player.reset();
+					let _count = 0;
+					let status = game();
+				}
+		}//game over
+	
+		if (status = 1){
+			do SquareFaceGame.gameOver(_player.getPoints());
+		}
+		return;
+	}
+	
+	/**
+	 * display game over message, recives score
+	 */
+	function void gameOver(int scr){
+		var int counter;
+		
+		do Main.initScreen();
+		do Output.moveCursor(4,20);
+		do Output.printString("SquareFace and the Aliens");
+		do Output.moveCursor(7,10);
+		do Output.printString("You lose!");
+		do Output.moveCursor(9,10);
+		do Output.printString("Game Over!");
+		do Output.moveCursor(11,10);
+		do Output.printString("Your Score: ");
+		do Output.printInt(scr);
+		do Output.moveCursor(13,10);
+		do Output.printString("Good luck next time!");
+		let counter = 0;
+		while (counter < 4){
+			do Output.moveCursor(20,1);
+			do Output.printInt(3-counter);
+			let counter = counter + 1;
+			do Sys.wait(1000);
+		}
+		return;
+	}
+	
+	/**
+	 * display message between levels, before level starts, receives lvl num
+	 */
+	function void levelSplash(int lvl){
+		var int counter;
+		
+		do Main.initScreen();
+		do Output.moveCursor(4,20);
+		do Output.printString("SquareFace and the Aliens");
+		do Output.moveCursor(7,10);
+		do Output.printString("Starting Level ");
+		do Output.printInt(lvl);
+		do Output.moveCursor(10,10);
+		do Output.printString("Use arrow keys to move");
+		do Output.moveCursor(11,10);
+		do Output.printString("Press Q to quit.");
+		do Output.moveCursor(12,10);
+		do Output.printString("Press P to pause, press P again to resume.");
+		do Output.moveCursor(14,10);
+		do Output.printString("Good Luck!");
+		let counter = 0;
+		while (counter < 4){
+			do Output.moveCursor(20,1);
+			do Output.printInt(3-counter);
+			let counter = counter + 1;
+			do Sys.wait(1000);
+		}
+		return;
+	}
+	
+	/**
+	 * display win message recieves player score
+	 */
+	function void winSplash(int scr){
+		var int counter;
+  
+		do Main.initScreen();
+		do Output.moveCursor(4,20);
+		do Output.printString("SquareFace and the Aliens");
+		do Output.moveCursor(7,10);
+		do Output.printString("Congratulations!");
+		//do Output.printInt(lvl);
+		do Output.moveCursor(9,10);
+		do Output.printString("You are victorious!");
+		do Output.moveCursor(11,10);
+		do Output.printString("Your Score: ");
+		do Output.printInt(scr);
+		let counter = 0;
+		while (counter < 4){
+			do Output.moveCursor(20,1);
+			do Output.printInt(3-counter);
+			let counter = counter + 1;
+			do Sys.wait(1000);
+		}
+		return;
+	}
+	
+	
+	/**
+	 * handles playing a level, borad, taking gems, killing, earning points etc
+	 * return 0 for quit, 1 for game over and 2 for win 
+	 */
+	 method int game(){
+		var int direction;
+		var char key;
+		
+		do _squareFaceBoard.drawLevel();
+		do Sys.wait(3000);
+		do StatusBar.updateLives(_player.getLives());
+		do StatusBar.updatePoints(_player.getPoints());
+
+		while (~(_squareFaceBoard.noMoreGems())){
+			//calculating when powerup is voer 
+			if (~(_powerUp=0)){
+				let _powerUp = _powerUp -1;
+				if (_powerUp = 0){
+					do unFear();
+				}
+			}
+			
+			//handeling keyboard input
+			let key = Keyboard.keyPressed();
+			if (key = 80){//pause
+				let key = 0;
+				while (~(key=80)){
+					do StatusBar.pause();
+					let key = Keyboard.keyPressed();
+				}
+			}
+			if (key = 81){//quit
+				//let exit = true;
+				return 0;
+            }
+			if (key = 131) { // move up
+                let direction = 1;
+            }
+            if (key = 133) { // move down
+                let direction = 2;
+            }
+            if (key = 130) { // move left
+                let direction = 3;
+            }
+            if (key = 132) { // move right
+                let direction = 4;
+            }
+			
+            if (~(direction = 0)){ //move squareFace
+				do moveSquareFace(direction);
+			}
+			let key = 0;
+			let direction = 0;
+            do Sys.wait(200);
+			if (handelCollision()){ //check for kill or killed
+				return 1;
+			}
+			
+			do moveAliens();
+			if (handelCollision()){
+				return 1;
+			}
+        }
+		return 2;
+	}
+	
+	
+	/**
+	 * handels encounters of player and aliens
+	 * player kills in case of power up otherwise dies
+	 * returns true if game over, false otherwise
+	 */
+	method boolean handelCollision(){
+		var AlienFace alien;
+		var int i;
+		var Point pos;
+		
+		let pos = _player.returnCurPos();
+		let i = 0;
+		
+		while (i<4){
+			let alien = _aliens[i];
+			if (pos.checkEqual(alien.getPos())){
+			//kill alien
+				if (~(_powerUp = 0)){
+					do alien.cleanFace();
+					do alien.drawAlien();
+					do Sys.wait(250);
+					do _player.cleanFace();
+					do _player.drawFace();
+					do Sys.wait(250);
+					do alien.drawAlien();
+					do Sys.wait(250);
+					do _player.updatePoints(200);
+										
+					//reset board
+					do alien.reset();
+					do _player.drawFace();
+				}else{
+			//die
+					do _player.cleanFace();
+					do Sys.wait(150);
+					do _player.drawKilled();
+					do Sys.wait(1000);
+					do _player.decreaseLive();
+					do resetAliens();
+					do _player.cleanFace();
+					do _player.reset();
+					
+					//check for game over
+					if (_player.gameOver()){
+						return true;
+					}else{
+						do StatusBar.updateLives(_player.getLives());
+						do Sys.wait(3000);
+						return false;
+					}
+				}
+			}
+			let i = i+1;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * return new position; calling function should dispose it
+	 */
+	method Point newPosition(int direction, int x, int y){
+		var Point newPos;
+		
+		if (direction = 1){
+			let newPos = Point.new(x-1, y);
+		}		
+		if (direction = 2){
+			let newPos = Point.new(x+1, y);
+		}
+		if (direction = 3){
+			let newPos = Point.new(x, y-1);
+		}
+		if (direction = 4){
+			let newPos = Point.new(x, y+1);
+		}
+		
+		return newPos;	
+	}
+
+	
+	/**
+	 * moving player's squareface
+	 */
+	method void moveSquareFace(int direction){
+	
+		var boolean illegalMove;
+		var Point squareFacePos, newPos;
+		var char key;
+		var int x , y;
+		
+		let squareFacePos = _player.returnCurPos();
+		let x = squareFacePos.getX();
+		let y = squareFacePos.getY();
+				
+		//check if move is legal
+		let newPos = newPosition(direction,x,y);
+		let illegalMove = _squareFaceBoard.checkMove(newPos.getX(),newPos.getY());
+		if (~(illegalMove)){
+			let _count = _count + 1;
+			if (_squareFaceBoard.isDot(newPos.getX(),newPos.getY())){
+				do _player.updatePoints(10);
+				do _squareFaceBoard.decreaseGem();
+			}else{
+				if(_squareFaceBoard.isPowerUp(newPos.getX(),newPos.getY())){
+					let _powerUp = _pwrDuration;
+					do _squareFaceBoard.decreaseGem();
+					do fear();	
+					do _player.updatePoints(50);
+				}
+			}
+			do _player.moveSquareFace(newPos.getX(),newPos.getY());
+			do _squareFaceBoard.updateBoard(newPos.getX(),newPos.getY(),0);
+			do StatusBar.updateMovNum(_count);
+		}		
+		do newPos.dispose();
+		return;
+	}
+			
+			
+	/**
+	 * move aliens
+	 */
+	method void moveAliens(){
+		var boolean illegalMove;
+		var int direction,x,y, oldX,oldY, i;
+		var Point newPos, pos;
+		var AlienFace alien;
+		
+		let i = 0;
+		while (i<4){
+			let alien = _aliens[i];
+			if (alien.isTurn()){
+				let illegalMove = true;
+				while (illegalMove){
+					let direction = 4;
+					while (direction=4){
+						let direction = Random.randint(5);
+					}
+				
+					let direction = direction + 1;
+				
+					let pos = alien.getPos();
+					let oldX = pos.getX();
+					let oldY = pos.getY();
+					let newPos = newPosition(direction, oldX, oldY); 
+					let x = newPos.getX();
+					let y = newPos.getY();
+					let illegalMove = _squareFaceBoard.checkMove(x,y);
+				
+					if (~(illegalMove)){
+						do alien.moveTo(x,y);
+						do _squareFaceBoard.updateBoard(oldX,oldY,1);
+					}
+					do newPos.dispose();
+				}
+			}
+			let i = i + 1;
+		}
+		return;
+	}
+	
+	
+	/**
+	 * reset aliens to start position
+	 */
+	method void resetAliens(){
+		var AlienFace alien;
+		var int i;
+		let i = 0;
+		while (i<4){
+			let alien = _aliens[i];
+			do alien.reset();
+			let i = i+1;
+		}
+		return;
+	}
+	
+		
+	/**
+	 * put aliens in fear state
+	 */
+	method void fear(){
+		var AlienFace alien;
+		var int i;
+		let i = 0;
+		while (i<4){
+			let alien = _aliens[i];
+			do alien.fear();
+			let i = i+1;
+		}
+		return;
+	}
+	
+	/** 
+	 * remove fear state
+	 */
+	method void unFear(){
+		var AlienFace alien;
+		var int i;
+		let i = 0;
+		while (i<4){
+			let alien = _aliens[i];
+			do alien.unFear();
+			let i = i+1;
+		}
+		return;
+	}
+	
+	/**
+	 * dispose Aliens
+	 */
+	method void disposeAliens(){
+		var AlienFace alien;
+		var int i;
+		let i = 0;
+		while (i<4){
+			let alien = _aliens[i];
+			do alien.dispose();
+			let i = i+1;
+		}
+		do _aliens.dispose();
+		return;
+	}
+	
+	/**
+	 * dtor:
+	 */
+	method void dispose(){
+		do _squareFaceBoard.dispose();
+		do _player.dispose();
+		do disposeAliens();
+		do Memory.deAlloc(this);
+		return;
+	}	
+ }
